@@ -1,0 +1,1 @@
+ C:\\Users\\Gevanno\\AndroidStudioProjects\\Zynergy\\.dart_tool\\flutter_build\\fe0f0af11d54cd4bfa18be139b5ff14c\\native_assets.yaml: 
