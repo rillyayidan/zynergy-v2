@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'verification_code_forget_pass.dart';
 import '../core/config/theme/app_colors.dart';
 import '../core/config/strings/app_text.dart';
+import '../api/api_service.dart'; // Import ApiService
 
 class ForgetPasswordScreen extends StatefulWidget {
   @override
@@ -10,6 +11,25 @@ class ForgetPasswordScreen extends StatefulWidget {
 
 class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   final _emailController = TextEditingController();
+  final ApiService _apiService = ApiService(); // Inisialisasi ApiService
+
+  Future<void> _sendResetCode() async {
+    final email = _emailController.text;
+    final response = await _apiService.sendResetCode(email);
+
+    if (response.success) {
+      // Jika berhasil, arahkan ke layar verifikasi OTP
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => VerificationCodeForgetPassScreen(email: email)),
+      );
+    } else {
+      // Tampilkan pesan error jika gagal
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response.message)),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -174,12 +194,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                         ),
                         SizedBox(height: 20),
                         ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => VerificationCodeForgetPassScreen()),
-                            );
-                          },
+                          onPressed: _sendResetCode, // Panggil fungsi _sendResetCode
                           child: Text(
                             'Dapatkan Kode OTP',
                             style: TextStyle(

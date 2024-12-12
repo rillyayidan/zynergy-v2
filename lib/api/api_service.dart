@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -160,6 +161,31 @@ class ApiService {
       final responseBody = jsonDecode(response.body);
       throw Exception('Failed to logout: ${responseBody['message'] ?? 'Unknown error'}');
     }
+  }
+
+  Future<ApiResponse> sendResetCode(String email) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/send-reset-code'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email}),
+    );
+
+    return ApiResponse.fromJson(jsonDecode(response.body));
+  }
+
+  Future<ApiResponse> resetPassword(String email, String otp, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/reset-password'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': email,
+        'otp': otp,
+        'password': password,
+        'password_confirmation': password, // Pastikan ini sesuai dengan validasi di backend
+      }),
+    );
+
+    return ApiResponse.fromJson(jsonDecode(response.body));
   }
 
   Future<int> getUserId() async {
